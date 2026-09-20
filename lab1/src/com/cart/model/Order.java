@@ -24,7 +24,6 @@ public class Order {
 
     public void confirm() {
         this.status = "CONFIRMED";
-        System.out.println("Замовлення підтверджено. Сума до сплати: " + finalPrice + " грн");
     }
 
     @Override
