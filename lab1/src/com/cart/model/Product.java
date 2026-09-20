@@ -1,5 +1,7 @@
 package com.cart.model;
 
+//Low Coupling — клас нічого не знає про ShoppingCart чи Customer
+
 /**
  * Товар в інтернет-магазині.
  */

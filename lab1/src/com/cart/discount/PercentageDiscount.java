@@ -10,6 +10,8 @@ public class PercentageDiscount implements DiscountPolicy {
         this.percentage = percentage;
     }
 
+    // Polymorphism — один і той самий метод, різна поведінка в кожній реалізації
+
     @Override
     public double applyDiscount(double totalPrice) {
         return totalPrice - (totalPrice * percentage / 100);
