@@ -1,6 +1,7 @@
 com.cart.catalog
 com.cart.controller
 com.cart.discount
+com.cart.factory
 com.cart.model
 com.cart.notification
 com.cart.payment

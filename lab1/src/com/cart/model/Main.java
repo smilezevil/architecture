@@ -1,9 +1,17 @@
 package com.cart.model;
 
+import com.cart.factory.PromotionFactory;
+import com.cart.factory.VipPromotionFactory;
+import com.cart.discount.DiscountPolicy;
+import com.cart.notification.NotificationService;
 import com.cart.catalog.ProductCatalog;
 import com.cart.controller.CartController;
 import com.cart.discount.SeasonalDiscount;
 import com.cart.notification.EmailNotificationService;
+import com.cart.payment.CardPaymentFactory;
+import com.cart.payment.CashPaymentFactory;
+import com.cart.payment.Payable;
+import com.cart.payment.PaymentFactory;
 
 public class Main {
     public static void main(String[] args) {
@@ -35,5 +43,21 @@ public class Main {
         Product clonedLaptop = laptop.clone();
         System.out.println("Клонований товар: " + clonedLaptop);
         System.out.println("Це той самий об'єкт? " + (laptop == clonedLaptop));
+
+        // Factory Method: клієнтський код не знає, який саме клас створюється
+        PaymentFactory cashFactory = new CashPaymentFactory();
+        Payable cashPayment = cashFactory.createPayment();
+        cashPayment.pay(500);
+
+        PaymentFactory cardFactory = new CardPaymentFactory();
+        Payable cardPayment = cardFactory.createPayment();
+        cardPayment.pay(1500);
+
+        // Abstract Factory: створюємо узгоджену пару знижка+сповіщення одним викликом
+        PromotionFactory vipFactory = new VipPromotionFactory();
+        DiscountPolicy vipDiscount = vipFactory.createDiscountPolicy();
+        NotificationService vipNotification = vipFactory.createNotificationService();
+
+        vipNotification.sendConfirmation(customer.getEmail(), vipDiscount.applyDiscount(10000));
     }
 }
