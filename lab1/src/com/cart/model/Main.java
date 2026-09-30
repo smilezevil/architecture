@@ -1,5 +1,6 @@
 package com.cart.model;
 
+import com.cart.pool.NotificationServicePool;
 import com.cart.factory.PromotionFactory;
 import com.cart.factory.VipPromotionFactory;
 import com.cart.discount.DiscountPolicy;
@@ -59,5 +60,23 @@ public class Main {
         NotificationService vipNotification = vipFactory.createNotificationService();
 
         vipNotification.sendConfirmation(customer.getEmail(), vipDiscount.applyDiscount(10000));
+
+        // Builder: покрокове конструювання складного об'єкта Order
+        Order builtOrder = new OrderBuilder(cart)
+                .withDeliveryAddress("м. Київ, вул. Хрещатик, 1")
+                .withComment("Дзвонити перед доставкою")
+                .build();
+        builtOrder.confirm();
+        System.out.println(builtOrder);
+
+        // Object Pool: перевикористання об'єктів NotificationService замість створення нових
+        NotificationServicePool pool = new NotificationServicePool();
+
+        NotificationService service1 = pool.acquire();
+        service1.sendConfirmation(customer.getEmail(), 100);
+        pool.release(service1);
+
+        NotificationService service2 = pool.acquire();
+        service2.sendConfirmation(customer.getEmail(), 200);
     }
 }
