@@ -1,5 +1,9 @@
 package com.cart.model;
 
+import com.cart.flyweight.ProductDisplayStyle;
+import com.cart.flyweight.ProductDisplayStyleFactory;
+import com.cart.composite.CartBundle;
+import com.cart.composite.CartItemComponent;
 import com.cart.bridge.Notification;
 import com.cart.bridge.UrgentNotification;
 import com.cart.bridge.EmailMessageSender;
@@ -95,5 +99,25 @@ public class Main {
 
         Notification urgentSms = new UrgentNotification(new SmsMessageSender());
         urgentSms.notify(customer.getEmail(), "Залишок товару закінчується");
+
+        // Composite: набір товарів рахується так само, як і один товар, через спільний інтерфейс
+        Product mouse = new Product("P2", "Мишка", 500, 20);
+        Product bag = new Product("P3", "Сумка для ноутбука", 800, 10);
+
+        CartBundle laptopBundle = new CartBundle("Комплект: Ноутбук + аксесуари");
+        laptopBundle.add(new CartItemComponent(laptop));
+        laptopBundle.add(new CartItemComponent(mouse));
+        laptopBundle.add(new CartItemComponent(bag));
+
+        System.out.println(laptopBundle.getName() + " — загальна ціна: " + laptopBundle.getPrice() + " грн");
+
+        // Flyweight: кілька товарів однієї категорії перевикористовують один спільний об'єкт стилю
+        ProductDisplayStyle style1 = ProductDisplayStyleFactory.getStyle("Електроніка");
+        style1.display(laptop.getName());
+
+        ProductDisplayStyle style2 = ProductDisplayStyleFactory.getStyle("Електроніка");
+        style2.display("Смартфон");
+
+        System.out.println("Це той самий об'єкт стилю? " + (style1 == style2));
     }
 }
