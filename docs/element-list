@@ -3,6 +3,7 @@ com.cart.bridge
 com.cart.catalog
 com.cart.composite
 com.cart.controller
+com.cart.decorator
 com.cart.discount
 com.cart.factory
 com.cart.flyweight
@@ -10,4 +11,5 @@ com.cart.model
 com.cart.notification
 com.cart.payment
 com.cart.pool
+com.cart.proxy
 com.cart.util

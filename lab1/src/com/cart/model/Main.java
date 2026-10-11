@@ -1,5 +1,8 @@
 package com.cart.model;
 
+import com.cart.proxy.ProductCatalogProxy;
+import com.cart.decorator.GiftWrapDecorator;
+import com.cart.discount.PercentageDiscount;
 import com.cart.flyweight.ProductDisplayStyle;
 import com.cart.flyweight.ProductDisplayStyleFactory;
 import com.cart.composite.CartBundle;
@@ -119,5 +122,17 @@ public class Main {
         style2.display("Смартфон");
 
         System.out.println("Це той самий об'єкт стилю? " + (style1 == style2));
+
+        // Decorator: обгортаємо вже існуючу знижку додатковою послугою, не змінюючи DiscountPolicy
+        DiscountPolicy baseDiscount = new PercentageDiscount(10);
+        DiscountPolicy withGiftWrap = new GiftWrapDecorator(baseDiscount);
+
+        System.out.println("Сума з подарунковим пакуванням: " + withGiftWrap.applyDiscount(1000) + " грн");
+
+        // Proxy: звернення до каталогу йде через заступник, який додає логування
+        ProductCatalogProxy catalogProxy = new ProductCatalogProxy();
+        catalogProxy.addProduct(mouse);
+        Product foundProduct = catalogProxy.getProduct("P1");
+        System.out.println("Знайдено через proxy: " + foundProduct);
     }
 }
