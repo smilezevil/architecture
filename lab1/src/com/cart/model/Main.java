@@ -1,5 +1,11 @@
 package com.cart.model;
 
+import com.cart.bridge.Notification;
+import com.cart.bridge.UrgentNotification;
+import com.cart.bridge.EmailMessageSender;
+import com.cart.bridge.SmsMessageSender;
+import com.cart.adapter.ExternalPaymentAdapter;
+import com.cart.adapter.ExternalPaymentGateway;
 import com.cart.pool.NotificationServicePool;
 import com.cart.factory.PromotionFactory;
 import com.cart.factory.VipPromotionFactory;
@@ -78,5 +84,16 @@ public class Main {
 
         NotificationService service2 = pool.acquire();
         service2.sendConfirmation(customer.getEmail(), 200);
+
+        // Adapter: сторонній клас ExternalPaymentGateway адаптовано під наш Payable
+        Payable adaptedPayment = new ExternalPaymentAdapter(new ExternalPaymentGateway());
+        adaptedPayment.pay(2000);
+
+        // Bridge: "що" (Notification/UrgentNotification) і "як" (Email/SmsMessageSender) комбінуються вільно
+        Notification emailNotification = new Notification(new EmailMessageSender());
+        emailNotification.notify(customer.getEmail(), "Ваше замовлення прийнято в обробку");
+
+        Notification urgentSms = new UrgentNotification(new SmsMessageSender());
+        urgentSms.notify(customer.getEmail(), "Залишок товару закінчується");
     }
 }

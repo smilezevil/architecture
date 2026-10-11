@@ -1,3 +1,5 @@
+com.cart.adapter
+com.cart.bridge
 com.cart.catalog
 com.cart.controller
 com.cart.discount
