@@ -1,6 +1,8 @@
 com.cart.adapter
 com.cart.bridge
 com.cart.catalog
+com.cart.chain
+com.cart.command
 com.cart.composite
 com.cart.controller
 com.cart.decorator

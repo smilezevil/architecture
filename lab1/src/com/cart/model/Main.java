@@ -1,5 +1,12 @@
 package com.cart.model;
 
+
+import com.cart.command.Command;
+import com.cart.command.AddToCartCommand;
+import com.cart.command.CheckoutCommand;
+import com.cart.chain.StockValidationHandler;
+import com.cart.chain.DiscountValidationHandler;
+import com.cart.chain.OrderValidationHandler;
 import com.cart.proxy.ProductCatalogProxy;
 import com.cart.decorator.GiftWrapDecorator;
 import com.cart.discount.PercentageDiscount;
@@ -134,5 +141,25 @@ public class Main {
         catalogProxy.addProduct(mouse);
         Product foundProduct = catalogProxy.getProduct("P1");
         System.out.println("Знайдено через proxy: " + foundProduct);
+
+        // Chain of Responsibility: запит проходить по ланцюжку перевірок одну за одною
+        OrderValidationHandler stockCheck = new StockValidationHandler();
+        OrderValidationHandler discountCheck = new DiscountValidationHandler();
+        stockCheck.setNext(discountCheck);
+
+        stockCheck.handle(cart);
+
+        // Command: дії загорнуті в об'єкти-команди, виконання відкладено до execute()
+        Product bagForCommand = new Product("P4", "Рюкзак", 700, 8);
+        Command addCommand = new AddToCartCommand(controller, bagForCommand, 1);
+        Command checkoutCommand = new CheckoutCommand(controller);
+
+        java.util.List<Command> commandHistory = new java.util.ArrayList<>();
+        commandHistory.add(addCommand);
+        commandHistory.add(checkoutCommand);
+
+        for (Command command : commandHistory) {
+            command.execute();
+        }
     }
 }
