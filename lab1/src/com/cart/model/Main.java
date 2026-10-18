@@ -1,6 +1,8 @@
 package com.cart.model;
 
-
+import com.cart.mediator.CheckoutMediator;
+import com.cart.iterator.CartIterator;
+import com.cart.iterator.CartItemIterator;
 import com.cart.command.Command;
 import com.cart.command.AddToCartCommand;
 import com.cart.command.CheckoutCommand;
@@ -161,5 +163,20 @@ public class Main {
         for (Command command : commandHistory) {
             command.execute();
         }
+
+        // Iterator: перебираємо товари кошика, не знаючи, як вони зберігаються всередині
+        cart.addItem(laptop, 1);
+        cart.addItem(mouse, 2);
+
+        CartIterator iterator = new CartItemIterator(cart.getItems());
+        System.out.println("Перебір товарів кошика через ітератор:");
+        while (iterator.hasNext()) {
+            CartItem item = iterator.next();
+            System.out.println(" - " + item);
+        }
+
+        // Mediator: координує оплату, сповіщення і очищення кошика в одному місці
+        CheckoutMediator mediator = new CheckoutMediator(cart, new com.cart.payment.CardPayment(), new EmailNotificationService());
+        mediator.completeCheckout();
     }
 }

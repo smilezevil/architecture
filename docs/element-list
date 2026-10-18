@@ -9,6 +9,8 @@ com.cart.decorator
 com.cart.discount
 com.cart.factory
 com.cart.flyweight
+com.cart.iterator
+com.cart.mediator
 com.cart.model
 com.cart.notification
 com.cart.payment
