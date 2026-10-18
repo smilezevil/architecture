@@ -28,6 +28,8 @@ public class ShoppingCart {
         return items;
     }
 
+    private final java.util.List<com.cart.observer.CartObserver> observers = new java.util.ArrayList<>();
+
     public void setDiscountPolicy(DiscountPolicy discountPolicy) {
         this.discountPolicy = discountPolicy;
     }
@@ -66,6 +68,37 @@ public class ShoppingCart {
             total += item.getSubtotal();
         }
         return discountPolicy.applyDiscount(total);
+    }
+
+    /**
+     * Memento: створює знімок поточного стану кошика.
+     */
+    public com.cart.memento.CartMemento save() {
+        System.out.println("Збережено знімок стану кошика (" + items.size() + " позицій)");
+        return new com.cart.memento.CartMemento(items);
+    }
+
+    /**
+     * Memento: відновлює стан кошика з раніше збереженого знімка.
+     */
+    public void restore(com.cart.memento.CartMemento memento) {
+        items.clear();
+        items.addAll(memento.getSavedItems());
+        System.out.println("Кошик відновлено зі знімка (" + items.size() + " позицій)");
+    }
+
+    /**
+     * Observer: реєструє нового спостерігача, який буде сповіщений
+     * при кожній зміні кошика.
+     */
+    public void addObserver(com.cart.observer.CartObserver observer) {
+        observers.add(observer);
+    }
+
+    private void notifyObservers() {
+        for (com.cart.observer.CartObserver observer : observers) {
+            observer.onCartChanged(items.size(), getTotalPrice());
+        }
     }
 
     public void clear() {

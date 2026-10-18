@@ -1,5 +1,6 @@
 package com.cart.model;
 
+import com.cart.observer.StockObserver;
 import com.cart.mediator.CheckoutMediator;
 import com.cart.iterator.CartIterator;
 import com.cart.iterator.CartItemIterator;
@@ -178,5 +179,18 @@ public class Main {
         // Mediator: координує оплату, сповіщення і очищення кошика в одному місці
         CheckoutMediator mediator = new CheckoutMediator(cart, new com.cart.payment.CardPayment(), new EmailNotificationService());
         mediator.completeCheckout();
+
+        // Memento: зберігаємо стан кошика, міняємо його, потім відновлюємо знімок
+        com.cart.memento.CartMemento snapshot = cart.save();
+
+        cart.clear();
+        System.out.println("Кошик очищено, позицій: " + cart.getItems().size());
+
+        cart.restore(snapshot);
+        System.out.println("Позицій після відновлення: " + cart.getItems().size());
+
+        // Observer: кошик сповіщає всіх підписаних спостерігачів при кожній зміні
+        cart.addObserver(new StockObserver());
+        cart.addItem(bag, 1);
     }
 }

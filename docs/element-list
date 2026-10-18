@@ -11,8 +11,10 @@ com.cart.factory
 com.cart.flyweight
 com.cart.iterator
 com.cart.mediator
+com.cart.memento
 com.cart.model
 com.cart.notification
+com.cart.observer
 com.cart.payment
 com.cart.pool
 com.cart.proxy
