@@ -19,6 +19,14 @@ public class Product implements Cloneable {
         this.stockQuantity = stockQuantity;
     }
 
+    /**
+     * Visitor: приймає відвідувача і делегує йому операцію над собою,
+     * не знаючи наперед, яку саме операцію відвідувач виконає.
+     */
+    public void accept(com.cart.visitor.ProductVisitor visitor) {
+        visitor.visit(this);
+    }
+
     public String getId() {
         return id;
     }

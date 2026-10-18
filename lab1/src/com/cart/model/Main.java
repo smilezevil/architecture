@@ -1,5 +1,8 @@
 package com.cart.model;
 
+import com.cart.visitor.TaxCalculatorVisitor;
+import com.cart.template.OrderProcessingTemplate;
+import com.cart.template.VipOrderProcessing;
 import com.cart.strategy.ShippingStrategy;
 import com.cart.strategy.StandardShipping;
 import com.cart.strategy.ExpressShipping;
@@ -212,5 +215,17 @@ public class Main {
         double orderTotal = 5000;
         System.out.println("Стандартна доставка: " + standardShipping.calculateShippingCost(orderTotal) + " грн");
         System.out.println("Експрес-доставка: " + expressShipping.calculateShippingCost(orderTotal) + " грн");
+
+        // Template Method: загальний алгоритм однаковий, змінюється лише крок розрахунку знижки
+        cart.addItem(laptop, 1);
+        OrderProcessingTemplate vipProcessing = new VipOrderProcessing();
+        vipProcessing.process(cart);
+
+        // Visitor: нова операція (розрахунок податку) додана без зміни класу Product
+        TaxCalculatorVisitor taxVisitor = new TaxCalculatorVisitor();
+        laptop.accept(taxVisitor);
+        mouse.accept(taxVisitor);
+
+        System.out.println("Загальний податок: " + taxVisitor.getTotalTax() + " грн");
     }
 }

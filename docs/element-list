@@ -20,4 +20,6 @@ com.cart.pool
 com.cart.proxy
 com.cart.state
 com.cart.strategy
+com.cart.template
 com.cart.util
+com.cart.visitor
