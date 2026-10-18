@@ -18,4 +18,6 @@ com.cart.observer
 com.cart.payment
 com.cart.pool
 com.cart.proxy
+com.cart.state
+com.cart.strategy
 com.cart.util

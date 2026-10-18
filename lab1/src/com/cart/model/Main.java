@@ -1,5 +1,8 @@
 package com.cart.model;
 
+import com.cart.strategy.ShippingStrategy;
+import com.cart.strategy.StandardShipping;
+import com.cart.strategy.ExpressShipping;
 import com.cart.observer.StockObserver;
 import com.cart.mediator.CheckoutMediator;
 import com.cart.iterator.CartIterator;
@@ -192,5 +195,22 @@ public class Main {
         // Observer: кошик сповіщає всіх підписаних спостерігачів при кожній зміні
         cart.addObserver(new StockObserver());
         cart.addItem(bag, 1);
+
+        // State: поведінка переходу залежить від поточного стану замовлення
+        Order stateOrder = new Order(cart);
+        System.out.println("Поточний стан: " + stateOrder.getStateName());
+        stateOrder.moveToNextState();
+        System.out.println("Поточний стан: " + stateOrder.getStateName());
+        stateOrder.moveToNextState();
+        System.out.println("Поточний стан: " + stateOrder.getStateName());
+        stateOrder.moveToNextState();
+
+        // Strategy: підміняємо алгоритм розрахунку доставки без зміни клієнтського коду
+        ShippingStrategy standardShipping = new StandardShipping();
+        ShippingStrategy expressShipping = new ExpressShipping();
+
+        double orderTotal = 5000;
+        System.out.println("Стандартна доставка: " + standardShipping.calculateShippingCost(orderTotal) + " грн");
+        System.out.println("Експрес-доставка: " + expressShipping.calculateShippingCost(orderTotal) + " грн");
     }
 }

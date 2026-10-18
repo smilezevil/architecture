@@ -17,6 +17,20 @@ public class Order {
         this.status = "CREATED";
     }
 
+    private com.cart.state.OrderState state = new com.cart.state.CreatedState();
+
+    public void setState(com.cart.state.OrderState state) {
+        this.state = state;
+    }
+
+    public void moveToNextState() {
+        state.next(this);
+    }
+
+    public String getStateName() {
+        return state.getName();
+    }
+
     public ShoppingCart getCart() {
         return cart;
     }
