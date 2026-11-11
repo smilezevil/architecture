@@ -3,6 +3,7 @@ package com.cart.lab14.cli;
 import com.cart.lab14.domain.*;
 import com.cart.lab14.slices.addtocart.*;
 import com.cart.lab14.slices.applypromocode.*;
+import com.cart.lab14.slices.checkout.*;
 import com.cart.lab14.slices.registercustomer.*;
 import com.cart.lab14.slices.removefromcart.*;
 
@@ -19,11 +20,13 @@ public class Main {
         CustomerRepository customerRepository = new CustomerRepository();
         ProductRepository productRepository = new ProductRepository();
         CartRepository cartRepository = new CartRepository();
+        OrderRepository orderRepository = new OrderRepository();
 
         RegisterCustomerHandler registerCustomerHandler = new RegisterCustomerHandler(customerRepository);
         AddProductToCartHandler addProductToCartHandler = new AddProductToCartHandler(cartRepository, productRepository);
         RemoveProductFromCartHandler removeProductFromCartHandler = new RemoveProductFromCartHandler(cartRepository);
         ApplyPromoCodeHandler applyPromoCodeHandler = new ApplyPromoCodeHandler(cartRepository, productRepository);
+        CheckoutHandler checkoutHandler = new CheckoutHandler(cartRepository, productRepository, orderRepository);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -38,6 +41,7 @@ public class Main {
             System.out.println("4. Видалити товар з кошика");
             System.out.println("5. Показати кошик");
             System.out.println("6. Застосувати промокод");
+            System.out.println("7. Оформити замовлення");
             System.out.println("0. Вихід");
             System.out.print("Обери пункт: ");
             String choice = scanner.nextLine();
@@ -49,6 +53,7 @@ public class Main {
                 case "4" -> removeFromCart(scanner, removeProductFromCartHandler);
                 case "5" -> showCart(scanner, cartRepository, productRepository);
                 case "6" -> applyPromoCode(scanner, applyPromoCodeHandler);
+                case "7" -> checkout(scanner, checkoutHandler);
                 case "0" -> running = false;
                 default -> System.out.println("Невідомий пункт меню.");
             }
@@ -139,6 +144,18 @@ public class Main {
             Cart cart = handler.handle(new ApplyPromoCodeRequest(customerId, promoCode));
             System.out.println("Промокод застосовано. Знижка: " + cart.getDiscountAmount());
         } catch (ApplyPromoCodeValidationException e) {
+            System.out.println("Помилка: " + e.getMessage());
+        }
+    }
+
+    private static void checkout(Scanner scanner, CheckoutHandler handler) {
+        System.out.print("Id покупця: ");
+        String customerId = scanner.nextLine();
+        try {
+            Order order = handler.handle(new CheckoutRequest(customerId));
+            System.out.println("Замовлення оформлено: id=" + order.getId()
+                    + ", сума=" + order.getTotalSum() + ", статус=" + order.getStatus());
+        } catch (CheckoutValidationException e) {
             System.out.println("Помилка: " + e.getMessage());
         }
     }

@@ -49,6 +49,11 @@ public class Cart {
         }
     }
 
+    public void clear() {
+        items.clear();
+        appliedDiscountAmount = 0.0;
+    }
+
     /**
      * Бізнес-правило 2: кошик не повинен бути порожнім для оформлення.
      */
