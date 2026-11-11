@@ -3,7 +3,6 @@ package com.cart.lab14.slices.registercustomer;
 import com.cart.lab14.domain.Customer;
 import com.cart.lab14.domain.CustomerRepository;
 
-import java.util.UUID;
 
 /**
  * Обробник сценарію "Реєстрація покупця" (вертикальний зріз).
@@ -31,7 +30,7 @@ public class RegisterCustomerHandler {
                     "Покупець з таким email вже зареєстрований: " + request.email);
         }
 
-        Customer customer = new Customer(UUID.randomUUID().toString(), request.name, request.email);
+        Customer customer = new Customer(customerRepository.generateNextId(), request.name, request.email);
         customerRepository.save(customer);
         return customer;
     }

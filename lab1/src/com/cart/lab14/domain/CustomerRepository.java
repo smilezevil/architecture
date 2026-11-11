@@ -25,6 +25,10 @@ public class CustomerRepository {
         return result;
     }
 
+    public String generateNextId() {
+        return "c" + (findAll().size() + 1);
+    }
+
     public Optional<Customer> findByEmail(String email) {
         for (Customer c : findAll()) {
             if (c.getEmail().equalsIgnoreCase(email)) {
