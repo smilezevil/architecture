@@ -53,7 +53,7 @@ public class CheckoutHandler {
         double finalSum = total - cart.getDiscountAmount();
 
         Order order = new Order(orderRepository.generateNextId(), request.customerId,
-                orderItems, finalSum, OrderStatus.CREATED);
+                orderItems, finalSum, OrderStatus.CONFIRMED);
         orderRepository.save(order);
 
         cart.clear();

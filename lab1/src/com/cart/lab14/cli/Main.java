@@ -3,20 +3,17 @@ package com.cart.lab14.cli;
 import com.cart.lab14.domain.*;
 import com.cart.lab14.slices.addtocart.*;
 import com.cart.lab14.slices.applypromocode.*;
+import com.cart.lab14.slices.cancelorder.*;
 import com.cart.lab14.slices.checkout.*;
 import com.cart.lab14.slices.registercustomer.*;
 import com.cart.lab14.slices.removefromcart.*;
+import com.cart.lab14.slices.shiporder.*;
 
 import java.util.Scanner;
 
-/**
- * Composition root: тут вручну "збираються" всі залежності
- * (репозиторії -> хендлери) і запускається консольне меню.
- */
 public class Main {
 
     public static void main(String[] args) {
-        // --- Composition root: ручне підключення залежностей ---
         CustomerRepository customerRepository = new CustomerRepository();
         ProductRepository productRepository = new ProductRepository();
         CartRepository cartRepository = new CartRepository();
@@ -27,6 +24,8 @@ public class Main {
         RemoveProductFromCartHandler removeProductFromCartHandler = new RemoveProductFromCartHandler(cartRepository);
         ApplyPromoCodeHandler applyPromoCodeHandler = new ApplyPromoCodeHandler(cartRepository, productRepository);
         CheckoutHandler checkoutHandler = new CheckoutHandler(cartRepository, productRepository, orderRepository);
+        CancelOrderHandler cancelOrderHandler = new CancelOrderHandler(orderRepository);
+        ShipOrderHandler shipOrderHandler = new ShipOrderHandler(orderRepository, productRepository);
 
         Scanner scanner = new Scanner(System.in);
 
@@ -42,6 +41,9 @@ public class Main {
             System.out.println("5. Показати кошик");
             System.out.println("6. Застосувати промокод");
             System.out.println("7. Оформити замовлення");
+            System.out.println("8. Скасувати замовлення");
+            System.out.println("9. Відправити замовлення");
+            System.out.println("10. Показати замовлення");
             System.out.println("0. Вихід");
             System.out.print("Обери пункт: ");
             String choice = scanner.nextLine();
@@ -54,6 +56,9 @@ public class Main {
                 case "5" -> showCart(scanner, cartRepository, productRepository);
                 case "6" -> applyPromoCode(scanner, applyPromoCodeHandler);
                 case "7" -> checkout(scanner, checkoutHandler);
+                case "8" -> cancelOrder(scanner, cancelOrderHandler);
+                case "9" -> shipOrder(scanner, shipOrderHandler);
+                case "10" -> showOrders(orderRepository);
                 case "0" -> running = false;
                 default -> System.out.println("Невідомий пункт меню.");
             }
@@ -157,6 +162,36 @@ public class Main {
                     + ", сума=" + order.getTotalSum() + ", статус=" + order.getStatus());
         } catch (CheckoutValidationException e) {
             System.out.println("Помилка: " + e.getMessage());
+        }
+    }
+
+    private static void cancelOrder(Scanner scanner, CancelOrderHandler handler) {
+        System.out.print("Id замовлення: ");
+        String orderId = scanner.nextLine();
+        try {
+            Order order = handler.handle(new CancelOrderRequest(orderId));
+            System.out.println("Замовлення скасовано: id=" + order.getId() + ", статус=" + order.getStatus());
+        } catch (CancelOrderValidationException e) {
+            System.out.println("Помилка: " + e.getMessage());
+        }
+    }
+
+    private static void shipOrder(Scanner scanner, ShipOrderHandler handler) {
+        System.out.print("Id замовлення: ");
+        String orderId = scanner.nextLine();
+        try {
+            Order order = handler.handle(new ShipOrderRequest(orderId));
+            System.out.println("Замовлення відправлено: id=" + order.getId() + ", статус=" + order.getStatus());
+        } catch (ShipOrderValidationException e) {
+            System.out.println("Помилка: " + e.getMessage());
+        }
+    }
+
+    private static void showOrders(OrderRepository orderRepository) {
+        System.out.println("Замовлення:");
+        for (Order o : orderRepository.findAll()) {
+            System.out.println("  id=" + o.getId() + ", покупець=" + o.getCustomerId()
+                    + ", сума=" + o.getTotalSum() + ", статус=" + o.getStatus());
         }
     }
 }
